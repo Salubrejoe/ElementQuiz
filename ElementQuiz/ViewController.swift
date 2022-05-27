@@ -17,7 +17,7 @@ enum State {
     case answer
 }
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var answerLabel: UILabel!
@@ -30,6 +30,11 @@ class ViewController: UIViewController {
     
     var mode: Mode = .flashCard
     var state: State = .question
+    
+    //Quiz-specific state
+    var answerIsCorrect = false
+    var correctAnswerCount = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +58,29 @@ class ViewController: UIViewController {
         
         state = .question
         updateUI()
+    }
+    
+    //Runs when user hits Return
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //Get the text from textField
+        let textFieldContents = textField.text!
+        
+        //Checks if answer is correct
+        if textFieldContents.lowercased() == elementList[currentElementIndex].lowercased() {
+            
+            answerIsCorrect = true
+            correctAnswerCount += 1
+        } else {
+            answerIsCorrect = false
+        }
+        
+        
+        //Display answer to the user
+        state = .answer
+        
+        updateUI()
+        
+        return true
     }
     
     //Gets current INDEX and sets UIImage + "?"/"Name"
