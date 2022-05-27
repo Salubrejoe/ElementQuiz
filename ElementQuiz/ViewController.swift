@@ -31,7 +31,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     
     // Element array and index
-    let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
+    var elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
     var currentElementIndex = 0
     
 
@@ -135,7 +135,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     //
-    // MARK: SETUP SESSION
+    // MARK: SETUP MODES
     // New Flash card mode session
     func setupFlashCards (){
         state = .question
@@ -143,11 +143,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     // New quiz session
     func setupQuiz() {
+        elementList = elementList.shuffled()
+        
         state = .question
         currentElementIndex = 0
         answerIsCorrect = false
         correctAnswerCount = 0
-        
     }
     
     
@@ -224,7 +225,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if answerIsCorrect {
                 answerLabel.text = "Correct"
             } else {
-                answerLabel.text = "Wack wack waaack.."
+                answerLabel.text = "Wack wack waaack..\nCorrect Answer: " + elementName
             }
         case .score:
             answerLabel.text = "Your score is \(correctAnswerCount) out of \(elementList.count)."
