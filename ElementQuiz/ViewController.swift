@@ -25,10 +25,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var modeSelector: UISegmentedControl!
     @IBOutlet weak var textField: UITextField!
     
+    //Element array and index
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
     var currentElementIndex = 0
     
-    var mode: Mode = .flashCard
+
+    //Instances of enums declarations
+    var mode: Mode = .flashCard {
+        didSet {
+            updateUI()
+            
+        }
+    }
     var state: State = .question
     
     //Quiz-specific state
@@ -40,6 +48,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         updateUI()
         
+    }
+    
+    //Switch modes Button
+    @IBAction func switchModes(_ sender: Any) {
+        if modeSelector.selectedSegmentIndex == 0 {
+            mode = .flashCard
+        } else {
+            mode = .quiz
+        }
     }
     
     //ShowAnswer Button
@@ -83,12 +100,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    //Gets current INDEX and sets UIImage + "?"/"Name"
-    func updateFlashCardUI() {
-        let elementName = elementList[currentElementIndex]
-        let image = UIImage(named: elementName)
-        imageView.image = image
+    //Updates UI in FLASHCARD mode
+    func updateFlashCardUI(elementName: String) {
         
+        //Hide text field and keyboard
+        textField.isHidden = true
+        textField.resignFirstResponder()
+        
+        //Answer Label
         if state == .answer {
             answerLabel.text = elementName
         } else {
@@ -96,16 +115,42 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func updateQuizUI() {
+    //Updates UI for QUIZ mode
+    func updateQuizUI(elementName: String) {
+        //Shows text field and keyboard
+        textField.isHidden = false
+        switch state {
+        case .question:
+            textField.text = ""
+            textField.becomeFirstResponder()
+        case .answer:
+            textField.resignFirstResponder()
+        }
         
+        //Answer Label
+        switch state {
+        case .question:
+            answerLabel.text = ""
+        case .answer:
+            if answerIsCorrect {
+                answerLabel.text = "Correct"
+            } else {
+                answerLabel.text = "Wack wack waaack.."
+            }
+        }
     }
     
+    //Gets current index, sets UIImage, switch updates UI
     func updateUI() {
+        let elementName = elementList[currentElementIndex]
+        let image = UIImage(named: elementName)
+        imageView.image = image
+        
         switch mode {
         case .flashCard:
-            updateFlashCardUI()
+            updateFlashCardUI(elementName: elementName)
         case .quiz:
-            updateQuizUI()
+            updateQuizUI(elementName: elementName)
         }
     }
 
