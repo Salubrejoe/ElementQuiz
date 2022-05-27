@@ -7,11 +7,13 @@
 
 import UIKit
 
+//MARK: Modes ENUM
 enum Mode {
     case flashCard
     case quiz
 }
 
+//MARK: States ENUM
 enum State {
     case question
     case answer
@@ -19,7 +21,7 @@ enum State {
 }
 
 class ViewController: UIViewController, UITextFieldDelegate {
-    //Outlets declaration
+    //MARK: Outlets
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var answerLabel: UILabel!
     
@@ -30,13 +32,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var nextButton: UIButton!
     
     
+    //MARK: Properties
+    
     // Element array and index
-    var elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
+    let fixedElementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
+    var elementList: [String] = []
     var currentElementIndex = 0
     
 
     // Instances of enums declarations
-
     var state: State = .question
     var mode: Mode = .flashCard {
         didSet {
@@ -56,20 +60,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var answerIsCorrect = false
     var correctAnswerCount = 0
     
-    
-    
-    // MARK: VIEW DID LOAD
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateUI()
-        
-    }
-    
-    
-    
     //
     //
-    // MARK: BUTTONS ACTIONS
+    // MARK: Actions
     // Switch modes Button
     @IBAction func switchModes(_ sender: Any) {
         if modeSelector.selectedSegmentIndex == 0 {
@@ -78,6 +71,19 @@ class ViewController: UIViewController, UITextFieldDelegate {
             mode = .quiz
         }
     }
+    
+    
+    
+    //
+    //
+    // MARK: VIEW DID LOAD
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        mode = .flashCard
+        
+    }
+    
+    
     
     //
     //
@@ -138,12 +144,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
     // MARK: SETUP MODES
     // New Flash card mode session
     func setupFlashCards (){
+        elementList = fixedElementList
+        
         state = .question
         currentElementIndex = 0
     }
     // New quiz session
     func setupQuiz() {
-        elementList = elementList.shuffled()
+        elementList = fixedElementList.shuffled()
         
         state = .question
         currentElementIndex = 0
