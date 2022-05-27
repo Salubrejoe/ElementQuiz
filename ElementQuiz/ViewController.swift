@@ -201,13 +201,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
             nextButton.isEnabled = false
         }
         
-        // Shows text field and keyboard
+        // Text field and keyboard
         textField.isHidden = false
         switch state {
         case .question:
+            textField.isEnabled = true
             textField.text = ""
             textField.becomeFirstResponder()
         case .answer:
+            textField.isEnabled = false
             textField.resignFirstResponder()
         case .score:
             textField.isHidden = true
