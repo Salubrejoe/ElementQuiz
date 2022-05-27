@@ -19,12 +19,16 @@ enum State {
 }
 
 class ViewController: UIViewController, UITextFieldDelegate {
-
+    //Outlets declaration
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var answerLabel: UILabel!
     
     @IBOutlet weak var modeSelector: UISegmentedControl!
     @IBOutlet weak var textField: UITextField!
+    
+    @IBOutlet weak var showAnswerButton: UIButton!
+    @IBOutlet weak var nextButton: UIButton!
+    
     
     // Element array and index
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
@@ -65,7 +69,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     //
     //
-    // MARK: BUTTONS
+    // MARK: BUTTONS ACTIONS
     // Switch modes Button
     @IBAction func switchModes(_ sender: Any) {
         if modeSelector.selectedSegmentIndex == 0 {
@@ -134,21 +138,33 @@ class ViewController: UIViewController, UITextFieldDelegate {
     // MARK: SETUP SESSION
     // New Flash card mode session
     func setupFlashCards (){
-        
+        state = .question
+        currentElementIndex = 0
     }
     // New quiz session
     func setupQuiz() {
+        state = .question
+        currentElementIndex = 0
+        answerIsCorrect = false
+        correctAnswerCount = 0
         
     }
     
     
     //
     //
-    // MARK: UPDATE UIs
-    // Updates UI in FLASHCARD mode
+    //
+    // MARK: FLASH CARDS UI
+    //Updates UI in FLASHCARD mode
     func updateFlashCardUI(elementName: String) {
+        
         // Segment control
         modeSelector.selectedSegmentIndex = 0
+        
+        // Buttons
+        showAnswerButton.isHidden = false
+        nextButton.isEnabled = true
+        nextButton.setTitle("Next Element", for: .normal)
         
         // Hide text field and keyboard
         textField.isHidden = true
@@ -162,10 +178,28 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    // MARK: QUIZ UI
     // Updates UI for QUIZ mode
     func updateQuizUI(elementName: String) {
+        
         // Segment control
         modeSelector.selectedSegmentIndex = 1
+        
+        // Buttons
+        showAnswerButton.isHidden = true
+        if currentElementIndex == elementList.count - 1 {
+            nextButton.setTitle("Show Score", for: .normal)
+        } else {
+            nextButton.setTitle("Next Question", for: .normal)
+        }
+        switch state {
+        case .question:
+            nextButton.isEnabled = false
+        case .answer:
+            nextButton.isEnabled = true
+        case .score:
+            nextButton.isEnabled = false
+        }
         
         // Shows text field and keyboard
         textField.isHidden = false
@@ -200,6 +234,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    // MARK: UPDATE UIs
     // Gets current index, sets UIImage, switch updates UI
     func updateUI() {
         let elementName = elementList[currentElementIndex]

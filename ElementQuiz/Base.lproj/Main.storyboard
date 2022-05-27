@@ -73,6 +73,8 @@
                         <outlet property="answerLabel" destination="jJW-VM-slQ" id="fip-i1-nlq"/>
                         <outlet property="imageView" destination="MdB-kS-gvc" id="Kxy-ty-3mm"/>
                         <outlet property="modeSelector" destination="aN8-x9-VO3" id="xaS-fV-1iC"/>
+                        <outlet property="nextButton" destination="NX2-pR-qU1" id="5M9-JU-CAX"/>
+                        <outlet property="showAnswerButton" destination="wsW-Jn-u3k" id="JzT-TS-wXP"/>
                         <outlet property="textField" destination="B9C-Vb-TAZ" id="czD-d1-9ee"/>
                     </connections>
                 </viewController>
