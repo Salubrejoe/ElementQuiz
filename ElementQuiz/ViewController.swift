@@ -26,32 +26,47 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var modeSelector: UISegmentedControl!
     @IBOutlet weak var textField: UITextField!
     
-    //Element array and index
+    // Element array and index
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
     var currentElementIndex = 0
     
 
-    //Instances of enums declarations
+    // Instances of enums declarations
+
+    var state: State = .question
     var mode: Mode = .flashCard {
         didSet {
+            // setupMode() called
+            switch mode {
+            case .flashCard:
+                setupFlashCards()
+            case .quiz:
+                setupQuiz()
+            }
             updateUI()
-            
         }
     }
-    var state: State = .question
     
-    //Quiz-specific state
+    
+    // Quiz-specific state
     var answerIsCorrect = false
     var correctAnswerCount = 0
     
     
+    
+    // MARK: VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
         
     }
     
-    //Switch modes Button
+    
+    
+    //
+    //
+    // MARK: BUTTONS
+    // Switch modes Button
     @IBAction func switchModes(_ sender: Any) {
         if modeSelector.selectedSegmentIndex == 0 {
             mode = .flashCard
@@ -60,19 +75,21 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    //ShowAnswer Button
+    //
+    //
+    // ShowAnswer Button
     @IBAction func showAnswer(_ sender: Any) {
         state = .answer
         updateUI()
     }
     
-    //Next Button
+    // Next Button
     @IBAction func next(_ sender: Any) {
         currentElementIndex += 1
-        //Corrects Index out of range
+        // Corrects Index out of range
         if currentElementIndex >= elementList.count {
             currentElementIndex = 0
-            //If QUIZ MODE on show result
+            // If QUIZ MODE on show result
             if mode == .quiz {
                 state = .score
                 updateUI()
@@ -80,18 +97,22 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-    
-        
         state = .question
         updateUI()
     }
     
-    //Runs when user hits Return
+  
+    
+    
+    
+    //
+    // MARK: TEXT FIELD
+    // Runs when user hits Return
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        //Get the text from textField
+        // Get the text from textField
         let textFieldContents = textField.text!
         
-        //Checks if answer is correct
+        // Checks if answer is correct
         if textFieldContents.lowercased() == elementList[currentElementIndex].lowercased() {
             
             answerIsCorrect = true
@@ -101,7 +122,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
         
         
-        //Display answer to the user
+        // Display answer to the user
         state = .answer
         
         updateUI()
@@ -109,16 +130,31 @@ class ViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    //Updates UI in FLASHCARD mode
+    //
+    // MARK: SETUP SESSION
+    // New Flash card mode session
+    func setupFlashCards (){
+        
+    }
+    // New quiz session
+    func setupQuiz() {
+        
+    }
+    
+    
+    //
+    //
+    // MARK: UPDATE UIs
+    // Updates UI in FLASHCARD mode
     func updateFlashCardUI(elementName: String) {
-        //Segment control
+        // Segment control
         modeSelector.selectedSegmentIndex = 0
         
-        //Hide text field and keyboard
+        // Hide text field and keyboard
         textField.isHidden = true
         textField.resignFirstResponder()
         
-        //Answer Label
+        // Answer Label
         if state == .answer {
             answerLabel.text = elementName
         } else {
@@ -126,12 +162,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    //Updates UI for QUIZ mode
+    // Updates UI for QUIZ mode
     func updateQuizUI(elementName: String) {
-        //Segment control
+        // Segment control
         modeSelector.selectedSegmentIndex = 1
         
-        //Shows text field and keyboard
+        // Shows text field and keyboard
         textField.isHidden = false
         switch state {
         case .question:
@@ -144,7 +180,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             textField.resignFirstResponder()
         }
         
-        //Answer Label
+        // Answer Label
         switch state {
         case .question:
             answerLabel.text = ""
@@ -158,13 +194,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
             answerLabel.text = "Your score is \(correctAnswerCount) out of \(elementList.count)."
         }
         
-        //Score display
+        // Score display
         if state == .score {
             displayScoreAlert()
         }
     }
     
-    //Gets current index, sets UIImage, switch updates UI
+    // Gets current index, sets UIImage, switch updates UI
     func updateUI() {
         let elementName = elementList[currentElementIndex]
         let image = UIImage(named: elementName)
@@ -179,17 +215,20 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    //Show an alert with the score
+    //
+    //
+    // MARK: ALERT FOR SCORE
+    // Show an alert with the score
     func displayScoreAlert() {
         
-        //Create a new UI ALERT CONTROLLER
+        // Create a new UI ALERT CONTROLLER
         let alert = UIAlertController(title: "Quiz score", message: "Your score is \(correctAnswerCount) out of \(elementList.count).", preferredStyle: .alert)
         
-        //Create ALERT ACTION
+        // Create ALERT ACTION
         let dismissAction = UIAlertAction(title: "OK", style: .default, handler: scoreAlertDismissed(_:))
         alert.addAction(dismissAction)
         
-        //Present to the usr
+        // Present to the usr
         present(alert, animated: true, completion: nil)
     }
     
