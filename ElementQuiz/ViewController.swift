@@ -21,7 +21,22 @@ class ViewController: UIViewController {
         
     }
     
-    // Shows image of the current Element
+    //ShowAnswer Button
+    @IBAction func showAnswer(_ sender: Any) {
+        answerLabel.text = elementList[currentElementIndex]
+    }
+    
+    //Next Button
+    @IBAction func next(_ sender: Any) {
+        currentElementIndex += 1
+        //Corrects Index out of range
+        if currentElementIndex >= elementList.count {
+            currentElementIndex = 0
+        }
+        updateElement()
+    }
+    
+    //Shows image of the current Element and sets AnsLbl to "?"
     func updateElement() {
         let elementName = elementList[currentElementIndex]
         let image = UIImage(named: elementName)
