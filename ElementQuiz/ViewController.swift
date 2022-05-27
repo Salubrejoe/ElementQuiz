@@ -7,23 +7,40 @@
 
 import UIKit
 
+enum Mode {
+    case flashCard
+    case quiz
+}
+
+enum State {
+    case question
+    case answer
+}
+
 class ViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var answerLabel: UILabel!
     
+    @IBOutlet weak var modeSelector: UISegmentedControl!
+    @IBOutlet weak var textField: UITextField!
+    
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
     var currentElementIndex = 0
     
+    var mode: Mode = .flashCard
+    var state: State = .question
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateElement()
+        updateUI()
         
     }
     
     //ShowAnswer Button
     @IBAction func showAnswer(_ sender: Any) {
-        answerLabel.text = elementList[currentElementIndex]
+        state = .answer
+        updateUI()
     }
     
     //Next Button
@@ -33,15 +50,35 @@ class ViewController: UIViewController {
         if currentElementIndex >= elementList.count {
             currentElementIndex = 0
         }
-        updateElement()
+        
+        state = .question
+        updateUI()
     }
     
-    //Shows image of the current Element and sets AnsLbl to "?"
-    func updateElement() {
+    //Gets current INDEX and sets UIImage + "?"/"Name"
+    func updateFlashCardUI() {
         let elementName = elementList[currentElementIndex]
         let image = UIImage(named: elementName)
         imageView.image = image
-        answerLabel.text = "?"
+        
+        if state == .answer {
+            answerLabel.text = elementName
+        } else {
+            answerLabel.text = "?"
+        }
+    }
+    
+    func updateQuizUI() {
+        
+    }
+    
+    func updateUI() {
+        switch mode {
+        case .flashCard:
+            updateFlashCardUI()
+        case .quiz:
+            updateQuizUI()
+        }
     }
 
 }
