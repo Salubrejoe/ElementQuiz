@@ -15,6 +15,7 @@ enum Mode {
 enum State {
     case question
     case answer
+    case score
 }
 
 class ViewController: UIViewController, UITextFieldDelegate {
@@ -71,7 +72,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
         //Corrects Index out of range
         if currentElementIndex >= elementList.count {
             currentElementIndex = 0
+            //If QUIZ MODE on show result
+            if mode == .quiz {
+                state = .score
+                updateUI()
+                return
+            }
         }
+        
+    
         
         state = .question
         updateUI()
@@ -102,6 +111,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     //Updates UI in FLASHCARD mode
     func updateFlashCardUI(elementName: String) {
+        //Segment control
+        modeSelector.selectedSegmentIndex = 0
         
         //Hide text field and keyboard
         textField.isHidden = true
@@ -117,6 +128,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     //Updates UI for QUIZ mode
     func updateQuizUI(elementName: String) {
+        //Segment control
+        modeSelector.selectedSegmentIndex = 1
+        
         //Shows text field and keyboard
         textField.isHidden = false
         switch state {
@@ -124,6 +138,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             textField.text = ""
             textField.becomeFirstResponder()
         case .answer:
+            textField.resignFirstResponder()
+        case .score:
+            textField.isHidden = true
             textField.resignFirstResponder()
         }
         
@@ -137,6 +154,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
             } else {
                 answerLabel.text = "Wack wack waaack.."
             }
+        case .score:
+            answerLabel.text = "Your score is \(correctAnswerCount) out of \(elementList.count)."
+        }
+        
+        //Score display
+        if state == .score {
+            displayScoreAlert()
         }
     }
     
@@ -152,6 +176,25 @@ class ViewController: UIViewController, UITextFieldDelegate {
         case .quiz:
             updateQuizUI(elementName: elementName)
         }
+    }
+    
+    
+    //Show an alert with the score
+    func displayScoreAlert() {
+        
+        //Create a new UI ALERT CONTROLLER
+        let alert = UIAlertController(title: "Quiz score", message: "Your score is \(correctAnswerCount) out of \(elementList.count).", preferredStyle: .alert)
+        
+        //Create ALERT ACTION
+        let dismissAction = UIAlertAction(title: "OK", style: .default, handler: scoreAlertDismissed(_:))
+        alert.addAction(dismissAction)
+        
+        //Present to the usr
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func scoreAlertDismissed(_ action: UIAlertAction) {
+        mode = .flashCard
     }
 
 }
